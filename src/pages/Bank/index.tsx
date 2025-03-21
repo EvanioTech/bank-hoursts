@@ -1,18 +1,34 @@
-import React, { useState, useEffect, useCallback } from "react"; 
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Layout, Button } from "@ui-kitten/components";
 import * as Linking from 'expo-linking';
-import { useFocusEffect } from '@react-navigation/native'; 
+import { useFocusEffect } from '@react-navigation/native';
 import styles from './styles';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const Bank = () => {
-  const navigation = useNavigation();
-  const [savedData, setSavedData] = useState([]);
-  const [totalHours, setTotalHours] = useState(0);
+type RootStackParamList = {
+  BankTabs: undefined;
+};
 
-  
+type BankScreenNavigationProp = StackNavigationProp<RootStackParamList, 'BankTabs'>;
+
+interface BankData {
+  date: string;
+  horaEntra: string;
+  minEntra: string;
+  horaSai: string;
+  minSai: string;
+  motivo: string;
+  horaExtra: string;
+  minExtra: string;
+}
+
+const Bank: React.FC = () => {
+  const navigation = useNavigation<BankScreenNavigationProp>();
+  const [savedData, setSavedData] = useState<BankData[]>([]);
+  const [totalHours, setTotalHours] = useState<string>("0h 0m");
 
   // Recarrega os dados toda vez que a tela for aberta
   useFocusEffect(
@@ -21,27 +37,20 @@ const Bank = () => {
         try {
           const value = await AsyncStorage.getItem('@bank_hours');
           if (value !== null) {
-            const parsedData = JSON.parse(value);
-            setSavedData(parsedData);  // Salvando como array de objetos
-            
-            console.log("Dados carregados com !");
-            
-            
-            
+            const parsedData = JSON.parse(value) as BankData[];
+            setSavedData(parsedData);
           }
         } catch (error) {
           console.error(error);
         }
       };
 
-      fetchData(); // Carrega os dados toda vez que a tela for focada
-      
-
-        }, [])  // O array com savedData significa que a função será chamada quando savedData mudar
+      fetchData();
+    }, [])
   );
 
   useEffect(() => {
-    if (savedData && savedData.length >=0){ // Verifica se savedData está carregado e não está vazio
+    if (savedData && savedData.length >= 0) {
       let totalHours = 0;
       let totalMinutes = 0;
 
@@ -55,11 +64,10 @@ const Bank = () => {
       totalMinutes = totalMinutes % 60;
 
       setTotalHours(`${totalHours}h ${totalMinutes}m`);
-      console.log("Total de horas extras calculado!");
     }
-  }, [savedData]); // Só calcula quando savedData for alterado
+  }, [savedData]);
 
-  const handleDelete = async (indexToDelete) => {
+  const handleDelete = async (indexToDelete: number) => {
     Alert.alert(
       "Confirmar exclusão",
       "Tem certeza que deseja excluir este item?",
@@ -74,9 +82,7 @@ const Bank = () => {
             try {
               const updatedData = savedData.filter((_, index) => index !== indexToDelete);
               await AsyncStorage.setItem('@bank_hours', JSON.stringify(updatedData));
-              setSavedData(updatedData);  // Atualiza o estado para refletir a exclusão
-              
-              console.log("Item excluído com sucesso!");
+              setSavedData(updatedData);
             } catch (error) {
               console.error("Erro ao excluir o item:", error);
             }
@@ -86,60 +92,45 @@ const Bank = () => {
     );
   };
 
-  // Função para limpar o banco de dados
- 
+  const handleExportToWhatsApp = async () => {
+    let message: string = "Banco de Horas:\n\n";
+    let totalHours: number = 0;
+    let totalMinutes: number = 0;
 
-  // Função para formatar os dados para o WhatsApp
- 
+    savedData.forEach((data) => {
+      message += `
+        Data: ${data.date}
+        Horário de Início: ${data.horaEntra}:${data.minEntra}
+        Horário de Saída: ${data.horaSai}:${data.minSai}
+        Motivo: ${data.motivo}
+        Horas Extras: ${data.horaExtra}:${data.minExtra}
+        ----------------------
+      `;
 
-const handleExportToWhatsApp = async () => {
-  let message : string = "Banco de Horas:\n\n";
-  let totalHours : number = 0;
-  let totalMinutes : number = 0;
+      totalHours += parseInt(data.horaExtra, 10);
+      totalMinutes += parseInt(data.minExtra, 10);
+    });
 
-  // Adiciona os dados de cada dia no banco de dados
-  savedData.forEach((data) => {
-    message += `
-      Data: ${data.date}
-      Horário de Início: ${data.horaEntra}:${data.minEntra}
-      Horário de Saída: ${data.horaSai}:${data.minSai}
-      Motivo: ${data.motivo}
-      Horas Extras: ${data.horaExtra}:${data.minExtra}
+    totalHours += Math.floor(totalMinutes / 60);
+    totalMinutes = totalMinutes % 60;
 
-      ----------------------
-    `;
+    message += `\nTotal de Horas Extras: ${totalHours}h ${totalMinutes}m\n`;
 
-    // Calcula o total de horas extras
-    totalHours += parseInt(data.horaExtra, 10);
-    totalMinutes += parseInt(data.minExtra, 10);
-  });
+    const encodedMessage = encodeURIComponent(message);
+    const url = `whatsapp://send?text=${encodedMessage}`;
 
-  // Converte total de minutos para horas e minutos
-  totalHours += Math.floor(totalMinutes / 60);
-  totalMinutes = totalMinutes % 60;
-
-  // Adiciona o total de horas extras ao final da mensagem
-  message += `\nTotal de Horas Extras: ${totalHours}h ${totalMinutes}m\n`;
-
-  const encodedMessage = encodeURIComponent(message); // Codificando a string para URL
-
-  // Abrindo o WhatsApp com a mensagem formatada
-  const url = `whatsapp://send?text=${encodedMessage}`;
-
-  try {
-    await Linking.openURL(url);
-  } catch (error) {
-    console.error("Erro ao abrir o WhatsApp:", error);
-  }
-};
-
+    try {
+      await Linking.openURL(url);
+    } catch (error) {
+      console.error("Erro ao abrir o WhatsApp:", error);
+    }
+  };
 
   const handleExportToGmail = async () => {
     let message = "Banco de Horas:\n\n";
     let totalHours = 0;
     let totalMinutes = 0;
-  
-    // Adiciona os dados de cada dia no banco de dados
+
     savedData.forEach((data) => {
       message += `
         Data: ${data.date}
@@ -149,26 +140,22 @@ const handleExportToWhatsApp = async () => {
         Motivo: ${data.motivo}
         ----------------------
       `;
-  
-      // Calcula o total de horas extras
+
       totalHours += parseInt(data.horaExtra, 10);
       totalMinutes += parseInt(data.minExtra, 10);
     });
-  
-    // Converte total de minutos para horas e minutos
+
     totalHours += Math.floor(totalMinutes / 60);
     totalMinutes = totalMinutes % 60;
-  
-    // Adiciona o total de horas extras ao final da mensagem
+
     message += `\nTotal de Horas Extras: ${totalHours}h ${totalMinutes}m\n`;
-  
-    const subject = "Horas Extras"; // Assunto do e-mail
+
+    const subject = "Horas Extras";
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(message);
-  
-    // Abrindo o Gmail com a mensagem formatada
+
     const url = `mailto:?subject=${encodedSubject}&body=${encodedBody}`;
-  
+
     try {
       await Linking.openURL(url);
     } catch (error) {
@@ -193,7 +180,7 @@ const handleExportToWhatsApp = async () => {
                 style={styles.button}
                 appearance='outline'
                 status='danger'
-                onPress={() => handleDelete(index)}  // Passando o índice para identificar o item a ser excluído
+                onPress={() => handleDelete(index)}
               >
                 Excluir
               </Button>
@@ -204,20 +191,20 @@ const handleExportToWhatsApp = async () => {
         <Text style={styles.noDataText}>Nenhum dado salvo</Text>
       )}
       <Text style={styles.toralH}>Total de Horas Extras: {totalHours}</Text>
-     
+
       <Button
         style={styles.button}
         appearance='outline'
         status='success'
-        onPress={handleExportToWhatsApp} 
+        onPress={handleExportToWhatsApp}
       >
         Enviar para WhatsApp
       </Button>
-      <Button 
+      <Button
         style={styles.button}
         appearance='outline'
         status='warning'
-        onPress={handleExportToGmail} 
+        onPress={handleExportToGmail}
       >
         Enviar para Gmail
       </Button>
@@ -240,8 +227,7 @@ const handleExportToWhatsApp = async () => {
                   try {
                     await AsyncStorage.removeItem('@bank_hours');
                     setSavedData([]);
-                    setTotalHours(0);
-                    console.log("Banco de dados limpo com sucesso!");
+                    setTotalHours("0h 0m");
                   } catch (error) {
                     console.error("Erro ao limpar o banco de dados:", error);
                   }
@@ -253,12 +239,8 @@ const handleExportToWhatsApp = async () => {
       >
         Limpar Banco de Horas
       </Button>
-
-      
     </Layout>
   );
 };
-
-
 
 export { Bank };

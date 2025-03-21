@@ -1,36 +1,20 @@
-
-
-import { NavigationContainer } from '@react-navigation/native';
-import { Routes } from './src/routes';
 import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
+import { ApplicationProvider } from '@ui-kitten/components';
+import  Routes  from './src/routes';
 
-
-
-
-
-
-export default function App() {
+const App: React.FC = () => {
   return (
-   <NavigationContainer>
+    <NavigationContainer>
       <ApplicationProvider {...eva} theme={eva.dark}>
-       
         <Routes />
-        
       </ApplicationProvider>
-
-      
     </NavigationContainer>
-    
   );
-}
+};
 
-
-
-
-
-
+export default App;
 
 
 
