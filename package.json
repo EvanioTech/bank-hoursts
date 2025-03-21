@@ -1,6 +1,6 @@
 {
   "name": "bank-hours2",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "index.js",
   "scripts": {
     "start": "expo start",
@@ -9,13 +9,29 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@eva-design/eva": "^2.2.0",
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-community/datetimepicker": "^8.2.0",
+    "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/native-stack": "^7.2.0",
+    "@react-navigation/stack": "^7.1.1",
+    "@ui-kitten/components": "^5.3.1",
+    "date-fns": "^4.1.0",
     "expo": "~52.0.28",
+    "expo-linking": "^7.0.5",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
-    "react-native": "0.76.6"
+    "react-native": "0.76.6",
+    "react-native-gesture-handler": "^2.22.1",
+    "react-native-safe-area-context": "^5.1.0",
+    "react-native-screens": "^4.6.0",
+    "react-native-svg": "^15.11.1",
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/react": "~18.3.12"
   },
   "private": true
 }

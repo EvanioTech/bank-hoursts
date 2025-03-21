@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "bank-hours2",
-    "slug": "bank-hours2",
-    "version": "1.0.0",
+    "name": "Banco de horas",
+    "slug": "bank-hours",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,10 +19,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.matiasdevts.bankhours"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "build": {
+      "babel": {
+        "include": [
+          "@ui-kitten/components"
+        ]
+      }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "55a02361-2fa6-42d0-a6ab-3eedd4325ffd"
+      }
+    },
+    "owner": "matiasdevts"
   }
 }
