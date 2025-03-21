@@ -93,9 +93,9 @@ const Bank: React.FC = () => {
   };
 
   const handleExportToWhatsApp = async () => {
-    let message: string = "Banco de Horas:\n\n";
-    let totalHours: number = 0;
-    let totalMinutes: number = 0;
+    let message = "Banco de Horas:\n\n";
+    let totalHours = 0;
+    let totalMinutes = 0;
 
     savedData.forEach((data) => {
       message += `
