@@ -7,6 +7,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 
 type RootStackParamList = {
   BankTabs: undefined;
+  SignUp: undefined;
+  SignIn: undefined;
 };
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'BankTabs'>;
@@ -49,7 +51,7 @@ const Home: React.FC = () => {
           },
         ]}
       >
-        Banco de Horas
+        T.I Fácil
       </Animated.Text>
       <Image source={require('./../../assets/d.png')} style={styles.img} />
 
@@ -58,9 +60,9 @@ const Home: React.FC = () => {
         appearance='outline'
         status='control'
         size='giant'
-        onPress={() => navigate.navigate('BankTabs')}
+        onPress={() => navigate.navigate('SignUp')}
       >
-        Registrar
+        Cadastrar
       </Button>
       <Text style={styles.footerText}>
         Direitos reservados Octadroid © {new Date().getFullYear()}
