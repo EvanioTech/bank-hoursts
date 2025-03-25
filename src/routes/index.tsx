@@ -7,14 +7,13 @@ import { Home } from '../pages/Home';
 import { Bank } from '../pages/Bank';
 import { AddHours } from '../pages/AddHours';
 import { Profile } from '../pages/Users/profile';
-import { SignIn } from '../pages/SignIn';
+
 import { SignUp } from '../pages/SignUp';
 
 // Tipagem das rotas
 export type RootStackParamList = {
   Home: undefined; 
   BankTabs: undefined; // Navegação em abas (Bank e AddHours)
-  SignIn: undefined; // Tela de Login
   SignUp: undefined; // Tela de Cadastro
 };
 
@@ -91,12 +90,7 @@ const AppStack: React.FC = () => {
         options={{ headerShown: false }} // Oculta o cabeçalho
       />
       
-      {/* Tela Login  */}
-      <Stack.Screen
-        name="SignIn"
-        component={SignIn}
-        options={{ headerShown: false }} // Oculta o cabeçalho
-      />
+      
       
       {/* Tela Cadastro  */}
       <Stack.Screen

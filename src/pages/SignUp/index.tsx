@@ -54,9 +54,11 @@ const SignUp: React.FC = () => {
       </Animated.Text>
 
       <Input
-      placeholder='Digite seu nome'
+      style={styles.input}
+      placeholder='Digite seu Nome'
       />
       <Input
+      style={styles.input}
       placeholder='Horário de Saída'
       />
       
@@ -66,7 +68,7 @@ const SignUp: React.FC = () => {
         style={styles.button}
         appearance='outline'
         status='control'
-        size='giant'
+        size='medium'
         onPress={() => navigate.navigate('BankTabs')}
       >
         Cadastrar

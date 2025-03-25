@@ -1,3 +1,4 @@
+import { Input } from "@ui-kitten/components";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
@@ -11,14 +12,13 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       color: '#fff',
     } ,
-    img: {
-      width: 380,
-      height: 360,
-      marginVertical: 20,
+    input: {
+     width: '85%',
+     marginTop: 20,
     } ,
     button: {
       marginTop: 40,
-      width: '80%',
+      width: '60%',
     } ,
     footerText: {
       position: 'absolute',

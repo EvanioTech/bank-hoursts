@@ -8,7 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 type RootStackParamList = {
   BankTabs: undefined;
   SignUp: undefined;
-  SignIn: undefined;
+  
 };
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'BankTabs'>;
@@ -64,6 +64,7 @@ const Home: React.FC = () => {
       >
         Cadastrar
       </Button>
+      
       <Text style={styles.footerText}>
         Direitos reservados Octadroid © {new Date().getFullYear()}
       </Text>
