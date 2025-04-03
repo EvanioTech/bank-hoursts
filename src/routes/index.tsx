@@ -6,21 +6,21 @@ import Feather from 'react-native-vector-icons/Feather';
 import { Home } from '../pages/Home';
 import { Bank } from '../pages/Bank';
 import { AddHours } from '../pages/AddHours';
-import { Profile } from '../pages/Users/profile';
+import { Holiday } from '../pages/Holiday';
 
-import { SignUp } from '../pages/SignUp';
 
 // Tipagem das rotas
 export type RootStackParamList = {
   Home: undefined; 
   BankTabs: undefined; // Navegação em abas (Bank e AddHours)
-  SignUp: undefined; // Tela de Cadastro
+
 };
 
 export type BankTabsParamList = {
   Bank: undefined; // Tela do Banco de Horas
   AddHours: undefined; // Tela de Adicionar Horas
-  Profile: undefined; // Tela de Perfil
+ Holiday: undefined; // Tela de Feriados
+
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -51,6 +51,15 @@ const BankTabs: React.FC = () => {
         }}
       />
       <Tab.Screen
+        name="Holiday"
+        component={Holiday}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="trending-up" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Bank"
         component={Bank}
         options={{
@@ -59,15 +68,8 @@ const BankTabs: React.FC = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Feather name="user" color={color} size={size} />
-          ),
-        }}
-      />
+      
+      
       
     </Tab.Navigator>
   );
@@ -92,12 +94,8 @@ const AppStack: React.FC = () => {
       
       
       
-      {/* Tela Cadastro  */}
-      <Stack.Screen
-        name="SignUp"
-        component={SignUp}
-        options={{ headerShown: false }} // Oculta o cabeçalho
-      />
+      
+      
     </Stack.Navigator>
   );
 };

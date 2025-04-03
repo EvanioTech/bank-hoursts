@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Modal } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Modal, Alert, Switch } from 'react-native';
 import { Input, Layout, Text, Button } from '@ui-kitten/components';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
@@ -17,13 +17,16 @@ type AddHoursScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Ban
 
 interface BankData {
   date: string;
-  horaEntra: string;
-  minEntra: string;
+  saidaNormal: string;
+  minSaidaNormal: string;
   horaSai: string;
   minSai: string;
   motivo: string;
-  horaExtra: string;
-  minExtra: string;
+  horaExtraDiurna: string;
+  minExtraDiurna: string;
+  horaExtraNoturna: string;
+  minExtraNoturna: string;
+  
 }
 
 const AddHours: React.FC = () => {
@@ -31,14 +34,17 @@ const AddHours: React.FC = () => {
 
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [horaEntra, setHoraEntra] = useState('');
-  const [minEntra, setMinEntra] = useState('');
+  const [saidaNormal, setSaidaNormal] = useState('');
+  const [minSaidaNormal, setMinSaidaNormal] = useState('');
   const [horaSai, setHoraSai] = useState('');
   const [minSai, setMinSai] = useState('');
-  const [horaExtra, setHoraExtra] = useState('');
-  const [minExtra, setMinExtra] = useState('');
   const [motivo, setMotivo] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [horaExtraDiurna, setHoraExtraDiurna] = useState('0');
+  const [minExtraDiurna, setMinExtraDiurna] = useState('0');
+  const [horaExtraNoturna, setHoraExtraNoturna] = useState('0');
+  const [minExtraNoturna, setMinExtraNoturna] = useState('0');
+  
 
   const onChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
@@ -63,6 +69,62 @@ const AddHours: React.FC = () => {
     }
   };
 
+  const calculateExtraHours = () => {
+    if (!saidaNormal || !minSaidaNormal || !horaSai || !minSai) return;
+
+    // Converter horários para minutos
+    const saidaNormalMinutes = parseInt(saidaNormal) * 60 + parseInt(minSaidaNormal);
+    let saidaRealMinutes = parseInt(horaSai) * 60 + parseInt(minSai);
+
+    // Se a saída real for menor que a saída normal, assume que passou para o dia seguinte
+    if (saidaRealMinutes < saidaNormalMinutes) {
+      saidaRealMinutes += 24 * 60;
+    }
+
+    // Total de minutos extras
+    const extraMinutes = saidaRealMinutes - saidaNormalMinutes;
+    
+    if (extraMinutes <= 0) {
+      setHoraExtraDiurna('0');
+      setMinExtraDiurna('0');
+      setHoraExtraNoturna('0');
+      setMinExtraNoturna('0');
+      return;
+    }
+
+    // Definir períodos noturnos (22:00 às 5:00)
+    const nightStart = 22 * 60 ; // 22:00 em minutos
+    const nightEnd = 5 * 60; // 5:00 em minutos
+
+    let nightMinutes = 0;
+    let dayMinutes = 0;
+
+    // Se terminar no período noturno (22:00-23:59)
+    if (saidaRealMinutes > nightStart) {
+      nightMinutes = saidaRealMinutes - Math.max(saidaNormalMinutes, nightStart);
+    }
+    // Se terminar no período noturno após meia-noite (00:00-05:00)
+    else if (saidaRealMinutes <= nightEnd) {
+      nightMinutes = saidaRealMinutes;
+      if (saidaNormalMinutes < nightStart) {
+        nightMinutes += (24 * 60 - nightStart); // Adiciona minutos desde 22:01 até 00:00
+      }
+    }
+
+    // Garantir que não ultrapasse o total de minutos extras
+    nightMinutes = Math.min(nightMinutes, extraMinutes);
+    dayMinutes = extraMinutes - nightMinutes;
+
+    setHoraExtraDiurna(Math.floor(dayMinutes / 60).toString());
+    setMinExtraDiurna((dayMinutes % 60).toString());
+    setHoraExtraNoturna(Math.floor(nightMinutes / 60).toString());
+    setMinExtraNoturna((nightMinutes % 60).toString());
+  };
+
+  useEffect(() => {
+    calculateExtraHours();
+  }, [saidaNormal, minSaidaNormal, horaSai, minSai]);
+
   return (
     <Layout style={styles.container}>
       <View style={styles.titleContainer}>
@@ -86,26 +148,26 @@ const AddHours: React.FC = () => {
         )}
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Início</Text>
+        <Text category='h3'>Horário de Saída Normal</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
           style={styles.input}
           placeholder='Horas'
-          value={horaEntra}
-          onChangeText={setHoraEntra}
+          value={saidaNormal}
+          onChangeText={setSaidaNormal}
           keyboardType='numeric'
         />
         <Input
           style={styles.input}
           placeholder='Minutos'
-          value={minEntra}
-          onChangeText={setMinEntra}
+          value={minSaidaNormal}
+          onChangeText={setMinSaidaNormal}
           keyboardType='numeric'
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Saída</Text>
+        <Text category='h3'>Horário de Saída Real</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -124,24 +186,49 @@ const AddHours: React.FC = () => {
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horas Extras</Text>
+        <Text category='h3'>Horas Extras Diurnas</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
           style={styles.input}
           placeholder='Horas'
-          value={horaExtra}
-          onChangeText={setHoraExtra}
+          value={horaExtraDiurna}
+          onChangeText={setHoraExtraDiurna}
           keyboardType='numeric'
+          disabled
         />
         <Input
           style={styles.input}
           placeholder='Minutos'
-          value={minExtra}
-          onChangeText={setMinExtra}
+          value={minExtraDiurna}
+          onChangeText={setMinExtraDiurna}
           keyboardType='numeric'
+          disabled
         />
       </View>
+      <View style={styles.titleContainer}>
+        <Text category='h3'>Horas Extras Noturnas</Text>
+      </View>
+      <View style={styles.rowContainer}>
+        <Input
+          style={styles.input}
+          placeholder='Horas'
+          value={horaExtraNoturna}
+          onChangeText={setHoraExtraNoturna}
+          keyboardType='numeric'
+          disabled
+        />
+        <Input
+          style={styles.input}
+          placeholder='Minutos'
+          value={minExtraNoturna}
+          onChangeText={setMinExtraNoturna}
+          keyboardType='numeric'
+          disabled
+        />
+      </View>
+   
+
       <View style={styles.titleContainer}>
         <Text category='h3'>Motivo</Text>
       </View>
@@ -174,39 +261,42 @@ const AddHours: React.FC = () => {
             <View style={styles.modalContent}>
               <Text category='h2' style={styles.txt}>Resumo</Text>
               <Text style={styles.txt}>Data: {formatDate(date)}</Text>
-              <Text style={styles.txt}>Horário de Início: {horaEntra}:{minEntra}</Text>
-              <Text style={styles.txt}>Horário de Saída: {horaSai}:{minSai}</Text>
-              <Text style={styles.txt}>Horas Extras: {horaExtra}:{minExtra}</Text>
+              <Text style={styles.txt}>Saída Normal: {saidaNormal.padStart(2, '0')}:{minSaidaNormal.padStart(2, '0')}</Text>
+              <Text style={styles.txt}>Saída Real: {horaSai.padStart(2, '0')}:{minSai.padStart(2, '0')}</Text>
+              <Text style={styles.txt}>Horas Extras Diurnas: {horaExtraDiurna.padStart(2, '0')}h {minExtraDiurna.padStart(2, '0')}m</Text>
+              <Text style={styles.txt}>Horas Extras Noturnas: {horaExtraNoturna.padStart(2, '0')}h {minExtraNoturna.padStart(2, '0')}m</Text>
               <Text style={styles.txt}>Motivo: {motivo}</Text>
               <Button
                 style={{ width: '90%', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginLeft: 15, margin: 5 }}
                 appearance='outline'
                 status='primary'
                 onPress={async () => {
-                  if (!horaEntra || !minEntra || !horaSai || !minSai || !motivo || !horaExtra || !minExtra) {
+                  if (!saidaNormal || !minSaidaNormal || !horaSai || !minSai || !motivo) {
                     alert('Por favor, preencha todos os campos.');
                     return;
                   }
 
-                  if (parseInt(horaEntra) > 23 || parseInt(horaSai) > 23 || parseInt(horaExtra) > 23) {
+                  if (parseInt(saidaNormal) > 23 || parseInt(horaSai) > 23) {
                     alert('O valor máximo para horas é 23.');
                     return;
                   }
 
-                  if (parseInt(minEntra) > 59 || parseInt(minSai) > 59 || parseInt(minExtra) > 59) {
+                  if (parseInt(minSaidaNormal) > 59 || parseInt(minSai) > 59) {
                     alert('O valor máximo para minutos é 59.');
                     return;
                   }
 
                   const data: BankData = {
                     date: formatDate(date),
-                    horaEntra,
-                    minEntra,
+                    saidaNormal,
+                    minSaidaNormal,
                     horaSai,
                     minSai,
                     motivo,
-                    horaExtra,
-                    minExtra,
+                    horaExtraDiurna,
+                    minExtraDiurna,
+                    horaExtraNoturna,
+                    minExtraNoturna,
                   };
 
                   const existingData = await AsyncStorage.getItem('@bank_hours');
@@ -225,13 +315,15 @@ const AddHours: React.FC = () => {
                     await saveDataToLocalStorage(newData);
 
                     setDate(new Date());
-                    setHoraEntra('');
-                    setMinEntra('');
+                    setSaidaNormal('');
+                    setMinSaidaNormal('');
                     setHoraSai('');
                     setMinSai('');
                     setMotivo('');
-                    setHoraExtra('');
-                    setMinExtra('');
+                    setHoraExtraDiurna('0');
+                    setMinExtraDiurna('0');
+                    setHoraExtraNoturna('0');
+                    setMinExtraNoturna('0');
                     setShowModal(false);
                     navigation.navigate('Bank');
                   } catch (e) {
@@ -261,13 +353,15 @@ const AddHours: React.FC = () => {
           size='large'
           onPress={() => {
             setDate(new Date());
-            setHoraEntra('');
-            setMinEntra('');
+            setSaidaNormal('');
+            setMinSaidaNormal('');
             setHoraSai('');
             setMinSai('');
             setMotivo('');
-            setHoraExtra('');
-            setMinExtra('');
+            setHoraExtraDiurna('0');
+            setMinExtraDiurna('0');
+            setHoraExtraNoturna('0');
+            setMinExtraNoturna('0');
           }}
         >
           Limpar

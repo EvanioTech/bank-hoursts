@@ -60,7 +60,7 @@ const Home: React.FC = () => {
         appearance='outline'
         status='control'
         size='giant'
-        onPress={() => navigate.navigate('SignUp')}
+        onPress={() => navigate.navigate('BankTabs')}
       >
         Cadastrar
       </Button>
