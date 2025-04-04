@@ -9,7 +9,9 @@ export default StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginTop: 20,
     marginBottom: 20,
+    color: '#fff',
   },
   dataContainer: {
     flex: 1,
@@ -56,6 +58,7 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#fff',
   },
   buttonsContainer: {
     flexDirection: 'row',

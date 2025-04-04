@@ -153,7 +153,7 @@ const Bank: React.FC = () => {
       return;
     }
 
-    let message = "Banco de Horas:\n\n";
+    let message = "Horas Extras:\n\n";
     let totalDiurnoHours = 0;
     let totalDiurnoMinutes = 0;
     let totalNoturnoHours = 0;
@@ -230,7 +230,7 @@ Motivo: ${data.motivo || 'Não informado'}
       return;
     }
 
-    let message = "Banco de Horas:\n\n";
+    let message = " Horas Extras:\n\n";
     let totalDiurnoHours = 0;
     let totalDiurnoMinutes = 0;
     let totalNoturnoHours = 0;

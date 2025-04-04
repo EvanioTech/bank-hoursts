@@ -138,18 +138,7 @@ const Holiday: React.FC = () => {
       setMinExtraDiurna('0');
       setHoraExtraNoturna('0');
       setMinExtraNoturna('0');
-    } else {
-      // Para dias normais, usar os campos regulares
-      setHoraExtraDiurna(Math.floor(dayMinutes / 60).toString());
-      setMinExtraDiurna((dayMinutes % 60).toString());
-      setHoraExtraNoturna(Math.floor(nightMinutes / 60).toString());
-      setMinExtraNoturna((nightMinutes % 60).toString());
-      // Zerar as horas de feriado
-      setHorasFeriadoDiurno('0');
-      setMinutosFeriadoDiurno('0');
-      setHorasFeriadoNoturno('0');
-      setMinutosFeriadoNoturno('0');
-    }
+    } 
   };
 
   useEffect(() => {
@@ -159,7 +148,7 @@ const Holiday: React.FC = () => {
   return (
     <Layout style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Informe a data</Text>
+        <Text category='h6'>Informe a data</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -180,7 +169,7 @@ const Holiday: React.FC = () => {
       </View>
 
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Saída Normal</Text>
+        <Text category='h6'>Horário de Saída Normal</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -200,7 +189,7 @@ const Holiday: React.FC = () => {
       </View>
 
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Saída Real</Text>
+        <Text category='h6'>Horário de Saída Real</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -220,7 +209,7 @@ const Holiday: React.FC = () => {
       </View>
 
       <View style={styles.titleContainer}>
-        <Text category='h3'>Feriado</Text>
+        <Text category='h6'>Feriado</Text>
       </View>
       <View style={styles.rowContainer}>
         
@@ -228,7 +217,7 @@ const Holiday: React.FC = () => {
       </View>
         
           <View style={styles.titleContainer}>
-            <Text category='h3'>Horas Feriado Diurnas</Text>
+            <Text category='h6'>Horas Feriado Diurnas</Text>
           </View>
           <View style={styles.rowContainer}>
             <Input
@@ -249,7 +238,7 @@ const Holiday: React.FC = () => {
             />
           </View>
           <View style={styles.titleContainer}>
-            <Text category='h3'>Horas Feriado Noturnas</Text>
+            <Text category='h6'>Horas Feriado Noturnas</Text>
           </View>
           <View style={styles.rowContainer}>
             <Input
@@ -273,7 +262,7 @@ const Holiday: React.FC = () => {
       
 
       <View style={styles.titleContainer}>
-        <Text category='h3'>Motivo</Text>
+        <Text category='h6'>Motivo</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input

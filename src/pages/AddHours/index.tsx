@@ -128,7 +128,7 @@ const AddHours: React.FC = () => {
   return (
     <Layout style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Informe a data</Text>
+        <Text category='h5'>Informe a data</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -148,7 +148,7 @@ const AddHours: React.FC = () => {
         )}
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Saída Normal</Text>
+        <Text category='h5'>Horário de Saída Normal</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -167,7 +167,7 @@ const AddHours: React.FC = () => {
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horário de Saída Real</Text>
+        <Text category='h5'>Horário de Saída Real</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -186,7 +186,7 @@ const AddHours: React.FC = () => {
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horas Extras Diurnas</Text>
+        <Text category='h5'>Horas Extras Diurnas</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -207,7 +207,7 @@ const AddHours: React.FC = () => {
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text category='h3'>Horas Extras Noturnas</Text>
+        <Text category='h5'>Horas Extras Noturnas</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
@@ -230,7 +230,7 @@ const AddHours: React.FC = () => {
    
 
       <View style={styles.titleContainer}>
-        <Text category='h3'>Motivo</Text>
+        <Text category='h5'>Motivo</Text>
       </View>
       <View style={styles.rowContainer}>
         <Input
